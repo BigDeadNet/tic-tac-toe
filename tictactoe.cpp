@@ -12,13 +12,12 @@ void drawBoard(char board[3][3]) {
     }
 }
 
-// Функция безопасного ввода координат
 void playerMove(char board[3][3], char symbol) {
     int row, col;
     bool validMove = false;
 
     while (!validMove) {
-        cout << "Введите строку (1-3) и столбец (1-3) для хода: ";
+        cout << "Игрок " << symbol << ", введите строку (1-3) и столбец (1-3): ";
         if (!(cin >> row >> col)) {
             cin.clear();
             cin.ignore(10000, '\n');
@@ -41,23 +40,54 @@ void playerMove(char board[3][3], char symbol) {
     }
 }
 
+// Функция проверки победителя
+char checkWinner(char board[3][3]) {
+    // Проверка строк и столбцов
+    for (int i = 0; i < 3; i++) {
+        if (board[i][0] != ' ' && board[i][0] == board[i][1] && board[i][1] == board[i][2])
+            return board[i][0]; // победа по строке
+        if (board[0][i] != ' ' && board[0][i] == board[1][i] && board[1][i] == board[2][i])
+            return board[0][i]; // победа по столбцу
+    }
+    // Проверка диагоналей
+    if (board[0][0] != ' ' && board[0][0] == board[1][1] && board[1][1] == board[2][2])
+        return board[0][0];
+    if (board[0][2] != ' ' && board[0][2] == board[1][1] && board[1][1] == board[2][0])
+        return board[0][2];
+
+    return ' '; // пока нет победителя
+}
+
 int main() {
+    setlocale(LC_ALL, "RU");
     char board[3][3] = {
         {' ', ' ', ' '},
         {' ', ' ', ' '},
         {' ', ' ', ' '}
     };
 
+    char currentPlayer = 'X';
+    int moves = 0;
+    char winner = ' ';
+
+    while (moves < 9 && winner == ' ') {
+        drawBoard(board);
+        playerMove(board, currentPlayer);
+        winner = checkWinner(board);
+        if (winner != ' ')
+            break;
+
+        // Смена игрока
+        currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+        moves++;
+    }
+
     drawBoard(board);
 
-    // Один ход крестика
-    playerMove(board, 'X');
-    drawBoard(board);
+    if (winner != ' ')
+        cout << "Победил игрок " << winner << "!" << endl;
+    else
+        cout << "Ничья!" << endl;
 
-    // Один ход нолика
-    playerMove(board, 'O');
-    drawBoard(board);
-
-    cout << "Ходы завершены (демонстрация работы проверки ввода)." << endl;
     return 0;
 }
