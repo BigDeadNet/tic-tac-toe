@@ -12,13 +12,12 @@ void drawBoard(char board[3][3]) {
     }
 }
 
-// Функция безопасного ввода координат
 void playerMove(char board[3][3], char symbol) {
     int row, col;
     bool validMove = false;
 
     while (!validMove) {
-        cout << "Введите строку (1-3) и столбец (1-3) для хода: ";
+        cout << "Игрок " << symbol << ", введите строку (1-3) и столбец (1-3): ";
         if (!(cin >> row >> col)) {
             cin.clear();
             cin.ignore(10000, '\n');
@@ -48,16 +47,19 @@ int main() {
         {' ', ' ', ' '}
     };
 
-    drawBoard(board);
+    char currentPlayer = 'X';
+    int moves = 0;
 
-    // Один ход крестика
-    playerMove(board, 'X');
-    drawBoard(board);
+    while (moves < 9) {  // Максимум 9 ходов
+        drawBoard(board);
+        playerMove(board, currentPlayer);
 
-    // Один ход нолика
-    playerMove(board, 'O');
-    drawBoard(board);
+        // Смена игрока
+        currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+        moves++;
+    }
 
-    cout << "Ходы завершены (демонстрация работы проверки ввода)." << endl;
+    drawBoard(board);
+    cout << "Все ходы сделаны. Конец игры (проверка победителя пока не реализована)." << endl;
     return 0;
 }
