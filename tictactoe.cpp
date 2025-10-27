@@ -1,4 +1,5 @@
 #include <iostream>
+#include <locale>
 using namespace std;
 
 void drawBoard(char board[3][3]) {
@@ -17,21 +18,21 @@ void playerMove(char board[3][3], char symbol) {
     bool validMove = false;
 
     while (!validMove) {
-        cout << "Èãðîê " << symbol << ", ââåäèòå ñòðîêó (1-3) è ñòîëáåö (1-3): ";
+        cout << "Ð˜Ð³Ñ€Ð¾Ðº " << symbol << ", Ð²Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÑÑ‚Ñ€Ð¾ÐºÑƒ (1-3) Ð¸ ÑÑ‚Ð¾Ð»Ð±ÐµÑ† (1-3): ";
         if (!(cin >> row >> col)) {
             cin.clear();
             cin.ignore(10000, '\n');
-            cout << "Îøèáêà: ââåäèòå äâà ÷èñëà!" << endl;
+            cout << "ÐžÑˆÐ¸Ð±ÐºÐ°: Ð²Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð´Ð²Ð° Ñ‡Ð¸ÑÐ»Ð°!" << endl;
             continue;
         }
 
         if (row < 1 || row > 3 || col < 1 || col > 3) {
-            cout << "Îøèáêà: êîîðäèíàòû äîëæíû áûòü îò 1 äî 3." << endl;
+            cout << "ÐžÑˆÐ¸Ð±ÐºÐ°: ÐºÐ¾Ð¾Ñ€Ð´Ð¸Ð½Ð°Ñ‚Ñ‹ Ð´Ð¾Ð»Ð¶Ð½Ñ‹ Ð±Ñ‹Ñ‚ÑŒ Ð¾Ñ‚ 1 Ð´Ð¾ 3." << endl;
             continue;
         }
 
         if (board[row - 1][col - 1] != ' ') {
-            cout << "Îøèáêà: ýòà êëåòêà óæå çàíÿòà!" << endl;
+            cout << "ÐžÑˆÐ¸Ð±ÐºÐ°: ÑÑ‚Ð° ÐºÐ»ÐµÑ‚ÐºÐ° ÑƒÐ¶Ðµ Ð·Ð°Ð½ÑÑ‚Ð°!" << endl;
             continue;
         }
 
@@ -40,7 +41,22 @@ void playerMove(char board[3][3], char symbol) {
     }
 }
 
+char checkWinner(char board[3][3]) {
+    for (int i = 0; i < 3; i++) {
+        if (board[i][0] != ' ' && board[i][0] == board[i][1] && board[i][1] == board[i][2])
+            return board[i][0];
+        if (board[0][i] != ' ' && board[0][i] == board[1][i] && board[1][i] == board[2][i])
+            return board[0][i];
+    }
+    if (board[0][0] != ' ' && board[0][0] == board[1][1] && board[1][1] == board[2][2])
+        return board[0][0];
+    if (board[0][2] != ' ' && board[0][2] == board[1][1] && board[1][1] == board[2][0])
+        return board[0][2];
+    return ' ';
+}
+
 int main() {
+    setlocale(LC_ALL, ""); // Ð²Ð°Ð¶Ð½Ð¾ Ð´Ð»Ñ Ð¿Ñ€Ð°Ð²Ð¸Ð»ÑŒÐ½Ð¾Ð³Ð¾ Ð¾Ñ‚Ð¾Ð±Ñ€Ð°Ð¶ÐµÐ½Ð¸Ñ Ñ€ÑƒÑÑÐºÐ¾Ð³Ð¾ Ñ‚ÐµÐºÑÑ‚Ð°
     char board[3][3] = {
         {' ', ' ', ' '},
         {' ', ' ', ' '},
@@ -49,17 +65,25 @@ int main() {
 
     char currentPlayer = 'X';
     int moves = 0;
+    char winner = ' ';
 
-    while (moves < 9) {  // Ìàêñèìóì 9 õîäîâ
+    while (moves < 9 && winner == ' ') {
         drawBoard(board);
         playerMove(board, currentPlayer);
+        winner = checkWinner(board);
+        if (winner != ' ')
+            break;
 
-        // Ñìåíà èãðîêà
         currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
         moves++;
     }
 
     drawBoard(board);
-    cout << "Âñå õîäû ñäåëàíû. Êîíåö èãðû (ïðîâåðêà ïîáåäèòåëÿ ïîêà íå ðåàëèçîâàíà)." << endl;
+
+    if (winner != ' ')
+        cout << "ÐŸÐ¾Ð±ÐµÐ´Ð¸Ð» Ð¸Ð³Ñ€Ð¾Ðº " << winner << "!" << endl;
+    else
+        cout << "ÐÐ¸Ñ‡ÑŒÑ!" << endl;
+
     return 0;
 }
